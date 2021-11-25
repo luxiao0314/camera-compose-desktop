@@ -49,7 +49,7 @@ fun JLabel.addmvLine() {
     //边框
     add(JLabel("").apply {
         border = BorderFactory.createLineBorder(Color.BLACK)
-        setBounds(0, 0, previewWidth, previewHeight)
+        setBounds(0, 0, mvPreviewWidth, mvPreviewHeight)
     }, BorderLayout.CENTER)
 
     //横线
@@ -57,7 +57,7 @@ fun JLabel.addmvLine() {
         val dashed = BorderFactory.createDashedBorder(Color.BLUE, 5f, 5f)
         val empty = BorderFactory.createEmptyBorder(-1, 0, -1, -1)
         border = CompoundBorder(empty, dashed)
-        setBounds(0, previewHeight / 3, previewWidth, 1)
+        setBounds(0, mvPreviewHeight / 3, mvPreviewWidth, 1)
     }, BorderLayout.CENTER)
 
     //横线
@@ -65,7 +65,7 @@ fun JLabel.addmvLine() {
         val dashed = BorderFactory.createDashedBorder(Color.BLUE, 5f, 5f)
         val empty = BorderFactory.createEmptyBorder(-1, 0, -1, -1)
         border = CompoundBorder(empty, dashed)
-        setBounds(0, previewHeight / 2, previewWidth, 1)
+        setBounds(0, mvPreviewHeight / 2, mvPreviewWidth, 1)
     }, BorderLayout.CENTER)
 
     //横线
@@ -73,7 +73,7 @@ fun JLabel.addmvLine() {
         val dashed = BorderFactory.createDashedBorder(Color.BLUE, 5f, 5f)
         val empty = BorderFactory.createEmptyBorder(-1, 0, -1, -1)
         border = CompoundBorder(empty, dashed)
-        setBounds(0, (previewHeight / 1.5).toInt(), previewWidth, 1)
+        setBounds(0, (mvPreviewHeight / 1.5).toInt(), mvPreviewWidth, 1)
     }, BorderLayout.CENTER)
 
     //竖线
@@ -81,7 +81,7 @@ fun JLabel.addmvLine() {
         val dashed = BorderFactory.createDashedBorder(Color.BLUE, 5f, 5f)
         val empty = BorderFactory.createEmptyBorder(-1, 0, -1, -1)
         border = CompoundBorder(empty, dashed)
-        setBounds(previewWidth / 3, 0, 1, previewHeight)
+        setBounds(mvPreviewWidth / 3, 0, 1, mvPreviewHeight)
     }, BorderLayout.CENTER)
 
     //竖线
@@ -89,7 +89,7 @@ fun JLabel.addmvLine() {
         val dashed = BorderFactory.createDashedBorder(Color.BLUE, 5f, 5f)
         val empty = BorderFactory.createEmptyBorder(-1, 0, -1, -1)
         border = CompoundBorder(empty, dashed)
-        setBounds(previewWidth / 2, 0, 1, previewHeight)
+        setBounds(mvPreviewWidth / 2, 0, 1, mvPreviewHeight)
     }, BorderLayout.CENTER)
 
     //竖线
@@ -97,7 +97,7 @@ fun JLabel.addmvLine() {
         val dashed = BorderFactory.createDashedBorder(Color.BLUE, 5f, 5f)
         val empty = BorderFactory.createEmptyBorder(-1, 0, -1, -1)
         border = CompoundBorder(empty, dashed)
-        setBounds((previewWidth / 1.5).toInt(), 0, 1, previewHeight)
+        setBounds((mvPreviewWidth / 1.5).toInt(), 0, 1, mvPreviewHeight)
     }, BorderLayout.CENTER)
 }
 

@@ -11,15 +11,18 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.*
 import com.ahs.camera.model.MessagesRepository
 import com.ahs.camera.ui.*
+import com.ahs.camera.utils.launchType
 import com.ahs.camera.utils.padding
 import com.ahs.camera.utils.previewWidth
+import com.ahs.camera.utils.windowWidth
 
 fun main() = application {
 
     val data = remember { mutableStateOf(MessagesRepository.getMessages()) }
     val deviceStatus = remember { mutableStateOf(MessagesRepository.getDeviceStatus()) }
     val visible = remember { mutableStateOf(true) }
-    val javacvPanel by lazy { JavacvCameraPanel() }
+    val javacvPanel by lazy { JavacvCameraPanel(0) }
+    val javacvPanel2 by lazy { JavacvCameraPanel(1) }
     val mvCamreraPanel by lazy { MvCamreraPanel() }
 
     Window(
@@ -27,18 +30,22 @@ fun main() = application {
         onCloseRequest = ::exitApplication,
         title = "拍照",
         resizable = false,
-        state = rememberWindowState(width = Dp(previewWidth * 2.toFloat()) + padding * 4, height = 800.dp)
+        state = rememberWindowState(width = windowWidth, height = 850.dp)
     ) {
         MaterialTheme {
 
-            Column(Modifier.background(MaterialTheme.colors.surface).fillMaxSize().padding(padding)) {
+            Column(Modifier.background(MaterialTheme.colors.surface).padding(padding)) {
 
                 AnimatedVisibility(visible = visible.value) {
                     Column {
                         message(deviceStatus.value)
                         Row {
-                            cameraPreview(this@Window, mvCamreraPanel)
-                            cameraPreview(this@Window, javacvPanel)
+                            if (launchType == 1) {
+                                cameraPreview(this@Window, mvCamreraPanel)
+                            } else {
+                                cameraPreview(this@Window, javacvPanel, padding)
+                                cameraPreview(this@Window, javacvPanel2, 0.dp)
+                            }
                         }
                     }
                 }

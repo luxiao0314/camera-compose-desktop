@@ -38,7 +38,7 @@ class MvCamreraPanel : JLabel(), CamreraPanel {
 
                 do {
                     byteArray2BufferedImage(getFrame()).let {
-                        icon = ImageIcon(createThumbnail(it, previewWidth, previewHeight))
+                        icon = ImageIcon(createImgThumbnail(it, mvPreviewWidth, mvPreviewHeight))
                     }
                     // 每40毫秒刷新视频,一秒25帧
                     Thread.sleep(40)

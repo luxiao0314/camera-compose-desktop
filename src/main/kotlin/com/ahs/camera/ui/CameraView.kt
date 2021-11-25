@@ -47,6 +47,23 @@ interface CamreraPanel {
 }
 
 @Composable
+fun cameraPreview(frameWindowScope: FrameWindowScope, camreraPanel: CamreraPanel, endPadding: Dp) {
+    frameWindowScope.window.addWindowListener(object : WindowAdapter() {
+        override fun windowClosing(e: WindowEvent) {
+            camreraPanel.stop()
+        }
+    })
+
+    Column(Modifier.padding(top = 5.dp).wrapContentWidth()) {
+        cameraMessage("俯视机位预览") { camreraPanel.saveImage() }
+        SwingPanel(
+            modifier = Modifier.padding(top = 5.dp, end = endPadding)
+                .size(Dp(previewWidth.toFloat()), Dp(previewHeight.toFloat())),
+            factory = { camreraPanel.getPanel() })
+    }
+}
+
+@Composable
 fun cameraPreview(frameWindowScope: FrameWindowScope, camreraPanel: CamreraPanel) {
     frameWindowScope.window.addWindowListener(object : WindowAdapter() {
         override fun windowClosing(e: WindowEvent) {
@@ -54,17 +71,15 @@ fun cameraPreview(frameWindowScope: FrameWindowScope, camreraPanel: CamreraPanel
         }
     })
 
-    val padding = if (camreraPanel is JavacvCameraPanel) 0.dp else padding
     Column(Modifier.padding(top = 5.dp).wrapContentWidth()) {
         cameraMessage("俯视机位预览") { camreraPanel.saveImage() }
         SwingPanel(
-            modifier = Modifier.padding(top = 5.dp, end = padding)
-                .size(Dp(previewWidth.toFloat()), Dp(previewHeight.toFloat())),
-            factory = { camreraPanel.getPanel() })
+            modifier = Modifier.padding(top = 5.dp).size(Dp(mvPreviewWidth.toFloat()), Dp(mvPreviewHeight.toFloat())),
+            factory = {
+                camreraPanel.getPanel()
+            })
     }
 }
-
-//声明全局,防止反复创建
 
 @Composable
 fun mvCameraPreview(frameWindowScope: FrameWindowScope) {

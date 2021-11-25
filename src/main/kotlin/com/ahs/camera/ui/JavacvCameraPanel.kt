@@ -18,7 +18,7 @@ import javax.swing.JOptionPane
  * @Date 2021/11/18 3:51 下午
  * @Version
  */
-class JavacvCameraPanel : JLabel(), CamreraPanel {
+class JavacvCameraPanel(var index: Int = 0): JLabel(), CamreraPanel {
 
     private var job: Job? = null
     private var grabber: OpenCVFrameGrabber? = null
@@ -36,7 +36,7 @@ class JavacvCameraPanel : JLabel(), CamreraPanel {
 
             tryCatchFor {
 
-                grabber = OpenCVFrameGrabber.createDefault(0).apply {
+                grabber = OpenCVFrameGrabber.createDefault(index).apply {
                     imageWidth = pictureWidth
                     imageHeight = pictureHeight
                     start()
@@ -44,7 +44,7 @@ class JavacvCameraPanel : JLabel(), CamreraPanel {
 
                 do {
                     getBufferedImage(grabber?.grab()).let {
-                        icon = ImageIcon(createThumbnail(it, previewWidth, previewHeight))
+                        icon = ImageIcon(createImgThumbnail(it, previewWidth, previewHeight))
                     }
                     // 每40毫秒刷新视频,一秒25帧
                     Thread.sleep(40)

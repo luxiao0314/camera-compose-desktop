@@ -146,7 +146,7 @@ fun saveImage(path: String?, image: BufferedImage?, width: Int, height: Int) =
 fun saveImage(path: String?, bs: ByteArray, width: Int, height: Int) =
     Thumbnails.of(ByteArrayInputStream(bs))
         .scale(1.00)
-        .sourceRegion(Positions.CENTER, width, height)
+//        .sourceRegion(Positions.CENTER, width, height)
         .outputQuality(1f)
         .toFile(path)
 
