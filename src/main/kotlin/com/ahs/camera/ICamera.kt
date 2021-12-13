@@ -1,4 +1,4 @@
-package com.aihuishou.creative.pcs.watcher.photocube.warehouse.ui.com.ahs.camera
+package com.ahs.camera
 
 import com.ahs.camera.ui.PhotoBlock
 

@@ -1,10 +1,10 @@
-package com.aihuishou.creative.pcs.watcher.photocube.warehouse.ui.com.ahs.camera.utils
+package com.ahs.camera.utils
 
 import com.ahs.camera.model.Store
 import com.ahs.camera.ui.JavacvCamera
 import com.ahs.camera.ui.PhotoBlock
 import com.ahs.camera.ui.MvCamrera
-import com.aihuishou.creative.pcs.watcher.photocube.warehouse.ui.com.ahs.camera.ICamera
+import com.ahs.camera.ICamera
 
 
 object CameraManager : ICamera {

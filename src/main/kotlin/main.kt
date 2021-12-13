@@ -1,4 +1,4 @@
-package com.aihuishou.creative.pcs.watcher.photocube.warehouse.ui
+package com.ahs.camera.ui
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
@@ -13,12 +13,7 @@ import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.application
 import androidx.compose.ui.window.rememberWindowState
 import com.ahs.camera.model.Store
-import com.ahs.camera.ui.*
-import com.ahs.camera.utils.closeRequest
-import com.ahs.camera.utils.launchType
-import com.ahs.camera.utils.padding
-import com.ahs.camera.utils.windowWidth
-import com.aihuishou.creative.pcs.watcher.photocube.warehouse.ui.com.ahs.camera.utils.CameraManager
+import com.ahs.camera.utils.*
 
 fun main() = application {
 

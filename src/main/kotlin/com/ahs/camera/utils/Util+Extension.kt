@@ -2,7 +2,6 @@ package com.ahs.camera.utils
 
 import androidx.compose.ui.window.ApplicationScope
 import com.ahs.camera.model.Device
-import com.aihuishou.creative.pcs.watcher.photocube.warehouse.ui.com.ahs.camera.utils.CameraManager
 import kotlinx.coroutines.Job
 import java.awt.BorderLayout
 import java.awt.Color
