@@ -20,6 +20,8 @@ const val pictureHeight = 2880
 const val previewWidth = (pictureHeight / 5)
 const val previewHeight = (pictureHeight / 5)
 
+const val msg = "正在打开摄像头请稍等..."
+
 const val mvPreviewWidth = previewWidth * 2
 const val mvPreviewHeight = previewWidth
 

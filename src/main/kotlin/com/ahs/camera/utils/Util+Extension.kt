@@ -1,8 +1,12 @@
 package com.ahs.camera.utils
 
+import androidx.compose.ui.window.ApplicationScope
+import com.ahs.camera.model.Device
+import com.aihuishou.creative.pcs.watcher.photocube.warehouse.ui.com.ahs.camera.utils.CameraManager
 import kotlinx.coroutines.Job
 import java.awt.BorderLayout
 import java.awt.Color
+import java.io.File
 import javax.swing.BorderFactory
 import javax.swing.JLabel
 import javax.swing.border.CompoundBorder
@@ -124,4 +128,36 @@ fun JLabel.addcvLine() {
     }, BorderLayout.CENTER)
 }
 
-fun filepath() =  "image/${System.currentTimeMillis()}.jpg"
+fun Device.netStatus(): String = if (netStatus.value == 1) "在线" else "离线"
+
+fun Device.cameraStatus(): String {
+    val camera1Status = if (camera1Status.value == 1) "在线(1)" else "离线(1)"
+    val camera2Status = if (camera2Status.value == 1) "在线(2)" else "离线(2)"
+    val camera3Status = if (camera3Status.value == 1) "在线(3)" else "离线(3)"
+    if (launchType == 1) return camera1Status
+    return "$camera2Status/$camera3Status"
+}
+
+fun Device.deviceStatus(): String = when (deviceStatus.value) {
+    0 -> "初始化"
+    1 -> "运行中"
+    2 -> "已结束"
+    else -> "未执行"
+}
+
+fun filepath() = "images/${System.currentTimeMillis()}.jpg"
+
+fun String.mkdirs(): String {
+    val file = File(toString())
+    if (file.parentFile != null && !file.parentFile.exists()) {
+        file.parentFile.mkdirs()
+    }
+    return file.path
+}
+
+fun ApplicationScope.closeRequest() {
+    CameraManager.javacvCamera.stop()
+    CameraManager.javacvCamera2.stop()
+    CameraManager.mvCamrera.stop()
+    exitApplication()
+}

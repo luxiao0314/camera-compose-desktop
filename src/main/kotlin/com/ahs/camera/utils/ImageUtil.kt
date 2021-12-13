@@ -4,12 +4,11 @@ import net.coobird.thumbnailator.Thumbnails
 import net.coobird.thumbnailator.geometry.Positions
 import org.bytedeco.javacv.Frame
 import org.bytedeco.javacv.Java2DFrameConverter
-import kotlin.Throws
-import java.lang.InterruptedException
 import java.awt.image.BufferedImage
-import javax.imageio.ImageIO
-import java.awt.Graphics
 import java.io.*
+import javax.imageio.ImageIO
+import javax.swing.JOptionPane
+
 
 /**
  * 图片工具类
@@ -126,37 +125,46 @@ fun saveFile(path: String?, bs: ByteArray) {
 
 fun byteArray2BufferedImage(data: ByteArray?): BufferedImage = ImageIO.read(ByteArrayInputStream(data))
 
+fun bufferedImage2ByteArray(image: BufferedImage): ByteArray {
+    val baos = ByteArrayOutputStream()
+    ImageIO.write(image, "jpg", baos)
+    return baos.toByteArray()
+}
+
 fun getBufferedImage(frame: Frame?): BufferedImage = Java2DFrameConverter().getBufferedImage(frame)
 
-fun saveImage(path: String?, image: BufferedImage?) {
-    saveImage(path, image, 720, 720)
+fun saveImage(path: String?, image: BufferedImage) {
+    saveImage(path, image, image.height, image.height)
 }
 
-fun saveImage(path: String?, bs: ByteArray) {
-    saveImage(path, bs, 720, 720)
-}
-
-fun saveImage(path: String?, image: BufferedImage?, width: Int, height: Int) =
+fun saveImage(path: String?, image: BufferedImage, width: Int, height: Int) {
     Thumbnails.of(image)
         .scale(1.00)
-        .sourceRegion(Positions.CENTER, width, height)
+        .sourceRegion(Positions.CENTER, width, height)  //裁剪大小
         .outputQuality(1f)
-        .toFile(path)
+        .toFile(path?.mkdirs())
+}
 
-fun saveImage(path: String?, bs: ByteArray, width: Int, height: Int) =
-    Thumbnails.of(ByteArrayInputStream(bs))
+fun saveImage(path: String?, image: ByteArray) {
+    Thumbnails.of(ByteArrayInputStream(image))
         .scale(1.00)
-//        .sourceRegion(Positions.CENTER, width, height)
         .outputQuality(1f)
-        .toFile(path)
+        .toFile(path?.mkdirs())
+}
+
+fun createThumbnail(image: BufferedImage): BufferedImage = createThumbnail(image, image.height, image.height)
 
 fun createThumbnail(image: BufferedImage, thumbWidth: Int, thumbHeight: Int): BufferedImage =
     Thumbnails.of(image)
-        .sourceRegion(Positions.CENTER, image.height, image.height)  //裁剪大小
-        .size(thumbWidth, thumbHeight)  //显示大小
-        .outputQuality(0.2f)
-        .keepAspectRatio(false)
+        .scale(1.00)
+        .sourceRegion(Positions.CENTER, thumbWidth, thumbHeight)  //裁剪大小
+        .outputQuality(1f)
         .asBufferedImage()
+
+fun saveImage(ba: ByteArray) {
+    saveImage(filepath(), ba)
+    JOptionPane.showMessageDialog(null, "拍照成功")
+}
 
 
 

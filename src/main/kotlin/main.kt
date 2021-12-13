@@ -1,56 +1,50 @@
-import androidx.compose.animation.*
+package com.aihuishou.creative.pcs.watcher.photocube.warehouse.ui
+
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
-import androidx.compose.material.*
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.*
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material.MaterialTheme
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.window.*
-import com.ahs.camera.model.MessagesRepository
+import androidx.compose.ui.window.Window
+import androidx.compose.ui.window.application
+import androidx.compose.ui.window.rememberWindowState
+import com.ahs.camera.model.Store
 import com.ahs.camera.ui.*
+import com.ahs.camera.utils.closeRequest
 import com.ahs.camera.utils.launchType
 import com.ahs.camera.utils.padding
-import com.ahs.camera.utils.previewWidth
 import com.ahs.camera.utils.windowWidth
+import com.aihuishou.creative.pcs.watcher.photocube.warehouse.ui.com.ahs.camera.utils.CameraManager
 
 fun main() = application {
 
-    val data = remember { mutableStateOf(MessagesRepository.getMessages()) }
-    val deviceStatus = remember { mutableStateOf(MessagesRepository.getDeviceStatus()) }
-    val visible = remember { mutableStateOf(true) }
-    val javacvPanel by lazy { JavacvCameraPanel(0) }
-    val javacvPanel2 by lazy { JavacvCameraPanel(1) }
-    val mvCamreraPanel by lazy { MvCamreraPanel() }
+    val visible = remember { Store.visible }
 
     Window(
         icon = painterResource("image/ic_icon.jpeg"),
-        onCloseRequest = ::exitApplication,
-        title = "拍照",
+        onCloseRequest = { closeRequest() },
+        title = "魔方W(v1.0.0)",
         resizable = false,
         state = rememberWindowState(width = windowWidth, height = 850.dp)
     ) {
         MaterialTheme {
-
             Column(Modifier.background(MaterialTheme.colors.surface).padding(padding)) {
-
-                AnimatedVisibility(visible = visible.value) {
-                    Column {
-                        message(deviceStatus.value)
-                        Row {
-                            if (launchType == 1) {
-                                cameraPreview(this@Window, mvCamreraPanel)
-                            } else {
-                                cameraPreview(this@Window, javacvPanel, padding)
-                                cameraPreview(this@Window, javacvPanel2, 0.dp)
-                            }
+                if (visible.value) {
+                    message()
+                    Row {
+                        if (launchType == 1) {
+                            camera1Preview(CameraManager.mvCamrera)
+                        } else {
+                            camera2Preview(CameraManager.javacvCamera)
+                            camera3Preview(CameraManager.javacvCamera2)
                         }
                     }
                 }
-
-                messageList(visible.value, data.value) { visible.value = !visible.value }
+                messageList(visible.value) { visible.value = !visible.value }
             }
         }
     }

@@ -3,11 +3,15 @@ package com.ahs.camera.ui
 import MvCameraControlWrapper.CameraControlException
 import MvCameraControlWrapper.MvCameraControl
 import MvCameraControlWrapper.MvCameraControlDefines
-import com.ahs.camera.utils.*
+import androidx.compose.runtime.MutableState
+import com.ahs.camera.model.Store
+import com.ahs.camera.utils.printDeviceInfo
 import com.ahs.camera.utils.safeCancel
+import com.ahs.camera.utils.tryCatchFor
+import com.ahs.camera.utils.byteArray2BufferedImage
 import kotlinx.coroutines.*
-import java.util.ArrayList
-import javax.swing.*
+import java.awt.image.BufferedImage
+import javax.swing.JComponent
 
 /**
  * @Description
@@ -15,68 +19,71 @@ import javax.swing.*
  * @Date 2021/11/18 3:51 下午
  * @Version
  */
-class MvCamreraPanel : JLabel(), CamreraPanel {
+class MvCamrera(var bufferedImage: MutableState<BufferedImage?>) : CamreraPanel {
 
     private var job: Job? = null
     private var nRet = MvCameraControlDefines.MV_OK
     private var hCamera: MvCameraControlDefines.Handle? = null
 
-    init {
-        addmvLine()
-        start()
-    }
-
-    override fun getPanel() = this
-
+    @Synchronized
     override fun start() {
-
         job = CoroutineScope(Dispatchers.IO).launch {
-
             tryCatchFor({
-
-                if (createCamera()) return@tryCatchFor
-
+                if (createCamera()) {
+                    return@tryCatchFor
+                }
+                Store.device.camera1Status.value = 1
                 do {
                     byteArray2BufferedImage(getFrame()).let {
-                        icon = ImageIcon(createImgThumbnail(it, mvPreviewWidth, mvPreviewHeight))
+                        bufferedImage.value = it
                     }
                     // 每40毫秒刷新视频,一秒25帧
                     Thread.sleep(40)
-                } while (isVisible && isActive)
+                } while (isActive && hCamera != null)
             }, {
-                it.printStackTrace()
+                Store.device.camera1Status.value = 0
                 stop()
             })
         }
     }
 
+    @Synchronized
     override fun stop() {
-        synchronized(this) {
+        println("stop")
 
-            job?.safeCancel()
+        job?.safeCancel()
 
-            hCamera?.let {
-                // Stop grabbing
-                nRet = MvCameraControl.MV_CC_StopGrabbing(hCamera)
-                if (MvCameraControlDefines.MV_OK != nRet) {
-                    System.err.printf("StopGrabbing fail, errcode: [%#x]\n", nRet)
-                }
-
-                // Destroy handle
-                nRet = MvCameraControl.MV_CC_DestroyHandle(hCamera)
-                if (MvCameraControlDefines.MV_OK != nRet) {
-                    System.err.printf("DestroyHandle failed, errcode: [%#x]\n", nRet)
-                }
+        hCamera?.let {
+            // Stop grabbing
+            nRet = MvCameraControl.MV_CC_StopGrabbing(hCamera)
+            if (MvCameraControlDefines.MV_OK != nRet) {
+                println("StopGrabbing fail, errcode: [$nRet]\n")
             }
+
+            // Destroy handle
+            nRet = MvCameraControl.MV_CC_DestroyHandle(hCamera)
+            if (MvCameraControlDefines.MV_OK != nRet) {
+                println("DestroyHandle failed, errcode: [$nRet]\n")
+            }
+
+            hCamera = null
+        }
+
+        bufferedImage.value = null
+    }
+
+    @Synchronized
+    override fun isStart(): Boolean {
+        return hCamera != null
+    }
+
+    override fun takePhoto(block: PhotoBlock?) {
+        job = CoroutineScope(Dispatchers.IO).launch {
+            block?.invoke(getFrame())
         }
     }
 
-    override fun saveImage(path: String, block: (() -> Unit?)?) {
-        CoroutineScope(Dispatchers.IO).launch {
-            saveImage(path, getFrame())
-            JOptionPane.showMessageDialog(null, "拍照成功")
-        }
-    }
+    override fun getComponent(): JComponent? = null
 
     private fun createCamera(): Boolean {
 
@@ -98,8 +105,7 @@ class MvCamreraPanel : JLabel(), CamreraPanel {
                 printDeviceInfo(stDeviceInfo)
             }
         } catch (e: CameraControlException) {
-            System.err.println("Enumrate devices failed!$e")
-            e.printStackTrace()
+            println("Enumrate devices failed!")
             return true
         }
 
@@ -107,8 +113,7 @@ class MvCamreraPanel : JLabel(), CamreraPanel {
         try {
             hCamera = MvCameraControl.MV_CC_CreateHandle(stDeviceList[0])
         } catch (e: CameraControlException) {
-            System.err.println("Create handle failed!$e")
-            e.printStackTrace()
+            println("Create handle failed!")
             hCamera = null
             return true
         }
@@ -116,21 +121,21 @@ class MvCamreraPanel : JLabel(), CamreraPanel {
         // Open device
         nRet = MvCameraControl.MV_CC_OpenDevice(hCamera)
         if (MvCameraControlDefines.MV_OK != nRet) {
-            System.err.printf("Connect to camera failed, errcode: [%#x]\n", nRet)
+            println("Connect to camera failed, errcode: [${nRet}]\n")
             return true
         }
 
         // Make sure that trigger mode is off
         nRet = MvCameraControl.MV_CC_SetEnumValueByString(hCamera, "TriggerMode", "Off")
         if (MvCameraControlDefines.MV_OK != nRet) {
-            System.err.printf("SetTriggerMode failed, errcode: [%#x]\n", nRet)
+            println("SetTriggerMode failed, errcode: [${nRet}]\n")
             return true
         }
 
         // Start grabbing
         nRet = MvCameraControl.MV_CC_StartGrabbing(hCamera)
         if (MvCameraControlDefines.MV_OK != nRet) {
-            System.err.printf("Start Grabbing fail, errcode: [%#x]\n", nRet)
+            println("Start Grabbing fail, errcode: [${nRet}]\n")
             return true
         }
         return false
@@ -141,7 +146,7 @@ class MvCamreraPanel : JLabel(), CamreraPanel {
         val stParam = MvCameraControlDefines.MVCC_INTVALUE()
         nRet = MvCameraControl.MV_CC_GetIntValue(hCamera, "PayloadSize", stParam)
         if (MvCameraControlDefines.MV_OK != nRet) {
-            System.err.printf("Get PayloadSize fail, errcode: [%#x]\n", nRet)
+            println("Get PayloadSize fail, errcode: [${nRet}]\n")
         }
 
         // Get one frame
@@ -149,7 +154,7 @@ class MvCamreraPanel : JLabel(), CamreraPanel {
         val pData = ByteArray(stParam.curValue.toInt())
         nRet = MvCameraControl.MV_CC_GetOneFrameTimeout(hCamera, pData, stImageInfo, 1000)
         if (MvCameraControlDefines.MV_OK != nRet) {
-            System.err.printf("GetOneFrameTimeout fail, errcode:[%#x]\n", nRet)
+            println("GetOneFrameTimeout fail, errcode:[${nRet}]\n")
         }
 
 //        println("GetOneFrame: ")
@@ -173,7 +178,7 @@ class MvCamreraPanel : JLabel(), CamreraPanel {
         stSaveParam.jpgQuality = 90 // JPG endoding quality(50-99]
         nRet = MvCameraControl.MV_CC_SaveImage(hCamera, stSaveParam)
         if (MvCameraControlDefines.MV_OK != nRet) {
-            System.err.printf("SaveImage fail, errcode: [%#x]\n", nRet)
+            println("SaveImage fail, errcode: [${nRet}]\n")
         }
         return imageBuffer
     }

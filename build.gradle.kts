@@ -37,7 +37,6 @@ compose.desktop {
             targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Exe, TargetFormat.Deb)
             packageName = "camera-desktop"
             packageVersion = "1.0.0"
-            jvmArgs("-Dcompose.application.configure.swing.globals=false")
         }
     }
 }
