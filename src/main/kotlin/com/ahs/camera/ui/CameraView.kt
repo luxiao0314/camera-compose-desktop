@@ -43,7 +43,7 @@ fun camera1Preview(camreraPanel: CamreraPanel) {
     if (!camreraPanel.isStart()) {
         camreraPanel.start()
     }
-    val bufferedImage = remember { Store.camera2bufferedImage }
+    val bufferedImage = remember { Store.camera1bufferedImage }
 
     Column(Modifier.padding(top = 5.dp).wrapContentWidth()) {
         cameraMessage("俯视机位预览") { camreraPanel.takePhoto { saveImage(it) } }
