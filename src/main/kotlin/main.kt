@@ -22,7 +22,7 @@ fun main() = application {
     Window(
         icon = painterResource("image/ic_icon.jpeg"),
         onCloseRequest = { closeRequest() },
-        title = "魔方W(v1.0.0)",
+        title = "相机",
         resizable = false,
         state = rememberWindowState(width = windowWidth, height = 850.dp)
     ) {
