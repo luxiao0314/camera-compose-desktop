@@ -4,19 +4,7 @@ import MvCameraControlWrapper.MvCameraControl
 import MvCameraControlWrapper.MvCameraControlDefines
 import MvCameraControlWrapper.MvCameraControlDefines.MV_CC_DEVICE_INFO
 import MvCameraControlWrapper.MvCameraControlDefines.MV_FRAME_OUT_INFO
-import com.ahs.camera.model.Message
-import org.bytedeco.javacv.Frame
-import org.bytedeco.javacv.FrameGrabber
-import org.bytedeco.javacv.Java2DFrameConverter
-import org.bytedeco.javacv.Java2DFrameUtils
-import org.jetbrains.skiko.toBitmap
-import java.awt.Color
-import java.awt.image.BufferedImage
-import java.io.*
 import java.util.*
-import javax.imageio.ImageIO
-import javax.swing.BorderFactory
-import javax.swing.border.CompoundBorder
 
 /**
  * @Description

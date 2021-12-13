@@ -28,5 +28,5 @@ const val mvPreviewHeight = previewWidth
 val windowWidth = if (launchType == 1) {
     Dp(mvPreviewWidth.toFloat()) + padding * 3
 } else {
-    Dp(previewWidth * 2.toFloat()) + padding * 4
+    Dp(previewWidth * 2.toFloat()) + padding * 3
 }
